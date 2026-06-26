@@ -57,27 +57,31 @@ public class TicketService {
         return TicketResponse.fromEntity(ticket);
     }
 
-    public Page<TicketResponse> getUserTickets(String email, int page, int limit) {
+    public Page<TicketResponse> getTickets(String email, int page, int limit) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException("User tidak ditemukan"));
 
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Ticket> tickets = ticketRepository.findByUserId(user.getId(), pageable);
+        Page<Ticket> tickets;
+        
+        if ("ADMIN".equals(user.getRole())) {
+            tickets = ticketRepository.findAll(pageable);
+        } else {
+            tickets = ticketRepository.findByUserId(user.getId(), pageable);
+        }
+        
         return tickets.map(TicketResponse::fromEntity);
     }
 
-    public Page<TicketResponse> getAllTickets(int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        Page<Ticket> tickets = ticketRepository.findAll(pageable);
-        return tickets.map(TicketResponse::fromEntity);
-    }
-
-    public TicketResponse cancelTicket(Long ticketId, String email, String role) {
+    public TicketResponse cancelTicket(Long ticketId, String email) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new CustomException("Tiket tidak ditemukan"));
 
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException("User tidak ditemukan"));
+
         // Validasi: User hanya bisa membatalkan tiketnya sendiri, Admin bebas
-        if (!"ADMIN".equals(role)) {
+        if (!"ADMIN".equals(user.getRole())) {
             if (!ticket.getUser().getEmail().equals(email)) {
                 throw new CustomException("Anda tidak berhak membatalkan tiket ini");
             }
