@@ -39,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.extractUsername(jwt);
             } catch (Exception e) {
-                // Token tidak valid atau kedaluwarsa
+                System.out.println("Gagal memvalidasi token JWT: " + e.getMessage());
             }
         }
 

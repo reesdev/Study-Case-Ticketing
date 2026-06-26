@@ -15,15 +15,4 @@ public class EventResponse {
     private Double price;
     private String status;
 
-    public static EventResponse fromEntity(Event event) {
-        EventResponse response = new EventResponse();
-        response.setId(event.getId());
-        response.setName(event.getName());
-        response.setDescription(event.getDescription());
-        response.setCategory(event.getCategory());
-        response.setCapacity(event.getCapacity());
-        response.setPrice(event.getPrice());
-        response.setStatus(event.getStatus());
-        return response;
-    }
 }

@@ -14,13 +14,4 @@ public class TicketResponse {
     private LocalDateTime purchaseDate;
     private String status;
 
-    public static TicketResponse fromEntity(Ticket ticket) {
-        TicketResponse response = new TicketResponse();
-        response.setId(ticket.getId());
-        response.setEventName(ticket.getEvent().getName());
-        response.setUserName(ticket.getUser().getName());
-        response.setPurchaseDate(ticket.getPurchaseDate());
-        response.setStatus(ticket.getStatus());
-        return response;
-    }
 }

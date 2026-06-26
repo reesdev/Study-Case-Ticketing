@@ -40,7 +40,14 @@ public class ReportService {
         
         // Loop klasik
         for (int i = 0; i < tickets.size(); i++) {
-            responses.add(TicketResponse.fromEntity(tickets.get(i)));
+            Ticket ticket = tickets.get(i);
+            TicketResponse response = new TicketResponse();
+            response.setId(ticket.getId());
+            response.setEventName(ticket.getEvent().getName());
+            response.setUserName(ticket.getUser().getName());
+            response.setPurchaseDate(ticket.getPurchaseDate());
+            response.setStatus(ticket.getStatus());
+            responses.add(response);
         }
         
         return responses;

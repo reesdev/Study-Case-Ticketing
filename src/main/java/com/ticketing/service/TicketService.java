@@ -30,6 +30,16 @@ public class TicketService {
     @Autowired
     private UserRepository userRepository;
 
+    private TicketResponse convertToResponse(Ticket ticket) {
+        TicketResponse response = new TicketResponse();
+        response.setId(ticket.getId());
+        response.setEventName(ticket.getEvent().getName());
+        response.setUserName(ticket.getUser().getName());
+        response.setPurchaseDate(ticket.getPurchaseDate());
+        response.setStatus(ticket.getStatus());
+        return response;
+    }
+
     @Transactional
     public TicketResponse bookTicket(String email, TicketRequest request) {
         User user = userRepository.findByEmail(email)
@@ -54,7 +64,7 @@ public class TicketService {
         ticket.setStatus("BOOKED");
 
         ticket = ticketRepository.save(ticket);
-        return TicketResponse.fromEntity(ticket);
+        return convertToResponse(ticket);
     }
 
     public Page<TicketResponse> getTickets(String email, int page, int limit) {
@@ -70,7 +80,7 @@ public class TicketService {
             tickets = ticketRepository.findByUserId(user.getId(), pageable);
         }
         
-        return tickets.map(TicketResponse::fromEntity);
+        return tickets.map(this::convertToResponse);
     }
 
     public TicketResponse cancelTicket(Long ticketId, String email) {
@@ -93,6 +103,6 @@ public class TicketService {
 
         ticket.setStatus("CANCELLED");
         ticket = ticketRepository.save(ticket);
-        return TicketResponse.fromEntity(ticket);
+        return convertToResponse(ticket);
     }
 }

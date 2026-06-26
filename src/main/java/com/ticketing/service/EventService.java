@@ -24,6 +24,18 @@ public class EventService {
     @Autowired
     private TicketRepository ticketRepository;
 
+    private EventResponse convertToResponse(Event event) {
+        EventResponse response = new EventResponse();
+        response.setId(event.getId());
+        response.setName(event.getName());
+        response.setDescription(event.getDescription());
+        response.setCategory(event.getCategory());
+        response.setCapacity(event.getCapacity());
+        response.setPrice(event.getPrice());
+        response.setStatus(event.getStatus());
+        return response;
+    }
+
     public EventResponse createEvent(EventRequest request) {
         if (eventRepository.existsByName(request.getName())) {
             throw new CustomException("Nama event sudah digunakan");
@@ -38,13 +50,13 @@ public class EventService {
         event.setStatus(request.getStatus());
 
         event = eventRepository.save(event);
-        return EventResponse.fromEntity(event);
+        return convertToResponse(event);
     }
 
     public Page<EventResponse> getAllEvents(String keyword, String category, String status, int page, int limit) {
         Pageable pageable = PageRequest.of(page, limit);
         Page<Event> eventPage = eventRepository.findEventsWithFilter(keyword, category, status, pageable);
-        return eventPage.map(EventResponse::fromEntity);
+        return eventPage.map(this::convertToResponse);
     }
 
     public EventResponse updateEvent(Long id, EventRequest request) {
@@ -67,7 +79,7 @@ public class EventService {
         event.setStatus(request.getStatus());
 
         event = eventRepository.save(event);
-        return EventResponse.fromEntity(event);
+        return convertToResponse(event);
     }
 
     public void deleteEvent(Long id) {

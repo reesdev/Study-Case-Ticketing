@@ -58,7 +58,8 @@ public class AuthService {
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        User user = userRepository.findByEmail(request.getEmail()).get();
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new CustomException("User tidak ditemukan"));
         String token = jwtUtil.generateToken(userDetails, user.getRole());
 
         return new AuthResponse(token, user.getEmail(), user.getRole());
