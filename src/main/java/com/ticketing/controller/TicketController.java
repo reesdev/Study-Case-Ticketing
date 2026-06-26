@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,11 +34,13 @@ public class TicketController {
     public ResponseEntity<Map<String, Object>> getTickets(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) LocalDate endDate,
             Authentication authentication) {
         
         String email = authentication.getName();
         
-        Page<TicketResponse> tickets = ticketService.getTickets(email, page, limit);
+        Page<TicketResponse> tickets = ticketService.getTickets(email, page, limit, startDate, endDate);
         
         Map<String, Object> response = new HashMap<>();
         response.put("data", tickets.getContent());

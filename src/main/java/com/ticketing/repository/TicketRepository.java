@@ -4,13 +4,26 @@ import com.ticketing.entity.Ticket;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     
+    @Query("SELECT t FROM Ticket t WHERE " +
+           "(:userId IS NULL OR t.user.id = :userId) AND " +
+           "(:startDate IS NULL OR t.purchaseDate >= :startDate) AND " +
+           "(:endDate IS NULL OR t.purchaseDate <= :endDate)")
+    Page<Ticket> findTicketsWithFilter(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable);
+
     // Cari semua tiket berdasarkan event id
     List<Ticket> findByEventId(Long eventId);
     

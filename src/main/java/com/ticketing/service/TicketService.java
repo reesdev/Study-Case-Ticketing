@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -67,17 +68,20 @@ public class TicketService {
         return convertToResponse(ticket);
     }
 
-    public Page<TicketResponse> getTickets(String email, int page, int limit) {
+    public Page<TicketResponse> getTickets(String email, int page, int limit, LocalDate startDate, LocalDate endDate) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException("User tidak ditemukan"));
 
         Pageable pageable = PageRequest.of(page, limit);
         Page<Ticket> tickets;
         
+        LocalDateTime start = (startDate != null) ? startDate.atStartOfDay() : null;
+        LocalDateTime end = (endDate != null) ? endDate.atTime(23, 59, 59) : null;
+        
         if ("ADMIN".equals(user.getRole())) {
-            tickets = ticketRepository.findAll(pageable);
+            tickets = ticketRepository.findTicketsWithFilter(null, start, end, pageable);
         } else {
-            tickets = ticketRepository.findByUserId(user.getId(), pageable);
+            tickets = ticketRepository.findTicketsWithFilter(user.getId(), start, end, pageable);
         }
         
         return tickets.map(this::convertToResponse);
