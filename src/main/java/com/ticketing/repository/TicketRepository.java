@@ -14,6 +14,9 @@ import java.util.List;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
     
+    // Catatan: Menggunakan Custom JPQL Dinamis untuk pemfilteran yang bersifat Null-Safe.
+    // Pendekatan ini mencegah NullPointerException (Error 500) yang umumnya terjadi 
+    // pada fungsi bawaan JPA (Between) ketika input rentang tanggal bernilai kosong (Null).
     @Query("SELECT t FROM Ticket t WHERE " +
            "(:userId IS NULL OR t.user.id = :userId) AND " +
            "(:startDate IS NULL OR t.purchaseDate >= :startDate) AND " +
