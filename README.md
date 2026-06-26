@@ -11,6 +11,72 @@ The application follows a standard Model-View-Controller (MVC) architectural pat
 - **Security**: Spring Security with Stateless JSON Web Tokens (JWT)
 - **Containerization**: Docker & Docker Compose
 
+## System Architecture Diagrams
+
+### Application Flow
+```mermaid
+flowchart LR
+    Client(["User / Postman"])
+    
+    subgraph Spring Boot Application
+        direction LR
+        Security["Security Layer\n(JWT & Role Check)"]
+        Controller["Controller Layer\n(API Endpoints)"]
+        Service["Service Layer\n(Business Logic)"]
+        Repo["Repository Layer\n(JPA / Hibernate)"]
+        
+        Security ==> Controller
+        Controller ==> Service
+        Service ==> Repo
+    end
+    
+    DB[("MySQL Database")]
+
+    Client ==>|1. Request API| Security
+    Repo ==>|2. Query Data| DB
+    
+    DB -.->|3. Return Data| Repo
+    Repo -.-> Service
+    Service -.-> Controller
+    Controller -.->|4. Response JSON| Client
+```
+
+### Database Entity Relationship Diagram (ERD)
+```mermaid
+erDiagram
+    USER {
+        bigint id PK
+        varchar(255) name
+        varchar(255) email "UNIQUE"
+        varchar(255) password
+        varchar(255) role "ADMIN / USER"
+        boolean is_deleted
+    }
+
+    EVENT {
+        bigint id PK
+        varchar(255) name "UNIQUE"
+        text description
+        varchar(255) category
+        int capacity
+        double price
+        varchar(255) status "Aktif / Berlangsung / Selesai"
+        boolean is_deleted
+    }
+
+    TICKET {
+        bigint id PK
+        bigint user_id FK
+        bigint event_id FK
+        datetime purchase_date
+        varchar(255) status "BOOKED / CANCELLED"
+        boolean is_deleted
+    }
+
+    USER ||--o{ TICKET : "memiliki"
+    EVENT ||--o{ TICKET : "dipesan dalam"
+```
+
 ## Prerequisites
 
 To run this project locally, ensure you have the following installed:
