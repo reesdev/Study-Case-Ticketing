@@ -14,6 +14,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Map<String, String>> handleCustomException(CustomException ex) {
+        System.out.println("[ERROR 400] Custom Exception: " + ex.getMessage());
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -28,11 +29,14 @@ public class GlobalExceptionHandler {
             org.springframework.validation.FieldError error = (org.springframework.validation.FieldError) errorArray[i];
             errors.put(error.getField(), error.getDefaultMessage());
         }
+        System.out.println("[ERROR 400] Validation Failed: " + errors);
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
+        System.out.println("[ERROR 500] Internal Server Error: " + ex.getMessage());
+        ex.printStackTrace(); // Penting untuk debugging error tak terduga
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", "Terjadi kesalahan pada server.");
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);

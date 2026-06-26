@@ -4,6 +4,7 @@ import com.ticketing.dto.EventRequest;
 import com.ticketing.dto.EventResponse;
 import com.ticketing.exception.CustomException;
 import com.ticketing.service.EventService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/events")
+@Tag(name = "2. Events", description = "Manajemen Event (CRUD & Pencarian)")
 public class EventController {
 
     @Autowired

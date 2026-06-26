@@ -1,6 +1,8 @@
 package com.ticketing.config;
 
 import com.ticketing.service.UserDetailsServiceImpl;
+import com.ticketing.exception.CustomAccessDeniedHandler;
+import com.ticketing.exception.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,12 @@ public class SecurityConfig {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -43,14 +51,20 @@ public class SecurityConfig {
         http.csrf().disable()
             .authorizeHttpRequests()
             .requestMatchers("/register", "/login").permitAll()
+            .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .requestMatchers(org.springframework.http.HttpMethod.POST, "/events/**").hasRole("ADMIN")
             .requestMatchers(org.springframework.http.HttpMethod.PUT, "/events/**").hasRole("ADMIN")
             .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/events/**").hasRole("ADMIN")
+            .requestMatchers(org.springframework.http.HttpMethod.GET, "/events").permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/tickets").hasRole("USER")
             .requestMatchers("/reports/**").hasRole("ADMIN")
             .anyRequest().authenticated()
             .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            .exceptionHandling()
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .accessDeniedHandler(customAccessDeniedHandler)
+            .and()
+            .sessionManagement().sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

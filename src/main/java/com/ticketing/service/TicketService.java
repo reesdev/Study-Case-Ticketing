@@ -83,6 +83,23 @@ public class TicketService {
         return tickets.map(this::convertToResponse);
     }
 
+    public TicketResponse getTicketById(Long ticketId, String email) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new CustomException("Tiket tidak ditemukan"));
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException("User tidak ditemukan"));
+
+        // Validasi: User hanya bisa melihat tiketnya sendiri, Admin bebas
+        if (!"ADMIN".equals(user.getRole())) {
+            if (!ticket.getUser().getEmail().equals(email)) {
+                throw new CustomException("Anda tidak berhak melihat tiket ini");
+            }
+        }
+
+        return convertToResponse(ticket);
+    }
+
     public TicketResponse cancelTicket(Long ticketId, String email) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new CustomException("Tiket tidak ditemukan"));

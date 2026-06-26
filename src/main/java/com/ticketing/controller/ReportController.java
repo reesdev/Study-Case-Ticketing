@@ -4,6 +4,7 @@ import com.ticketing.dto.ReportSummaryResponse;
 import com.ticketing.dto.TicketResponse;
 import com.ticketing.exception.CustomException;
 import com.ticketing.service.ReportService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/reports")
+@Tag(name = "4. Reports", description = "Laporan & Analytics (Admin Only)")
 public class ReportController {
 
     @Autowired

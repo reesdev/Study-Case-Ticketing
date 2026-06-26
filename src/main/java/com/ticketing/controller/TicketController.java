@@ -3,6 +3,7 @@ package com.ticketing.controller;
 import com.ticketing.dto.TicketRequest;
 import com.ticketing.dto.TicketResponse;
 import com.ticketing.service.TicketService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/tickets")
+@Tag(name = "3. Tickets", description = "Pembelian & Pembatalan Tiket")
 public class TicketController {
 
     @Autowired
@@ -44,6 +46,12 @@ public class TicketController {
         response.put("total_items", tickets.getTotalElements());
         
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TicketResponse> getTicketById(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        return ResponseEntity.ok(ticketService.getTicketById(id, email));
     }
 
     @PatchMapping("/{id}")

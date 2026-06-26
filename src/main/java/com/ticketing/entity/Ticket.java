@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tickets")
+@org.hibernate.annotations.SQLDelete(sql = "UPDATE tickets SET is_deleted = true WHERE id=?")
+@org.hibernate.annotations.SQLRestriction("is_deleted = false")
 @Getter
 @Setter
 public class Ticket {
@@ -31,4 +33,7 @@ public class Ticket {
     // Status: BOOKED, CANCELLED
     @Column(nullable = false)
     private String status;
+
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
 }

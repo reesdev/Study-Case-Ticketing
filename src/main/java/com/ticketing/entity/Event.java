@@ -6,6 +6,8 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "events")
+@org.hibernate.annotations.SQLDelete(sql = "UPDATE events SET is_deleted = true WHERE id=?")
+@org.hibernate.annotations.SQLRestriction("is_deleted = false")
 @Getter
 @Setter
 public class Event {
@@ -32,4 +34,7 @@ public class Event {
     // Status: Aktif, Berlangsung, Selesai
     @Column(nullable = false)
     private String status;
+
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
 }

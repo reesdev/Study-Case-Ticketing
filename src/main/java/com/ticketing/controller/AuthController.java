@@ -4,6 +4,7 @@ import com.ticketing.dto.AuthResponse;
 import com.ticketing.dto.LoginRequest;
 import com.ticketing.dto.RegisterRequest;
 import com.ticketing.service.AuthService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@Tag(name = "1. Authentication", description = "Otentikasi & Pendaftaran Pengguna")
 public class AuthController {
 
     @Autowired
