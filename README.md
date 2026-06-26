@@ -58,6 +58,14 @@ The API will be available at `http://localhost:8080`.
    mvn spring-boot:run
    ```
 
+## API Documentation & Live Demo
+
+The API is fully documented using Swagger UI. You can view the interactive documentation and test the endpoints directly via the live deployment URL below:
+
+👉 **[Live Swagger UI Documentation](https://deniable-constable-cinch.ngrok-free.dev/swagger-ui/index.html)**
+
+> **Note**: This is a temporary live tunnel (via Ngrok) directly connected to the development server.
+
 ## API Endpoints Overview
 
 All endpoints except authentication require a valid Bearer Token in the `Authorization` header.
